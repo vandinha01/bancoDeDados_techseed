@@ -66,5 +66,5 @@ esp.status "Status do Dispositivo",
 CONCAT(ults.id, 'M') "Ultrassonico",
 ultd.distancia ,
 ultd.impacto ,
-ultd.timestamp "Momento do Registro Ultrassonico"
+ultd.timestamp "Momento do Registro Ultrassonico" 
 ;
