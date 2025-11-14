@@ -1,5 +1,18 @@
 -- select seed tech 
 USE seed_tech;
+
+-- Quantos dispositivos ESP32 existem por armazém? (6)
+SELECT arm.nome "Armazen",
+arm.localizacao "Localização",
+arm.capacidade_kg "Capacidade",
+COUNT(esp.nome) "Dispositivo"
+FROM armazens arm
+INNER JOIN esp32_dispositivos esp on arm.id = esp.armazem_id
+GROUP BY arm.nome, arm.localizacao, arm.capacidade_kg, esp.nome
+ORDER BY arm.nome;
+
+
+
 /*Liste todos os armazéns com seus dispositivos ESP32 e o sensor DHTT22, 
 incluindo armazéns que não possuem dispositivos ou sensores.*/
 -- 1.
@@ -30,10 +43,9 @@ GROUP BY esp.nome, UPPER(esp.status), dhts.id, ldrs.id, ult.id;
 
 -- -------------------------------------------------------------------------------------------------------
 /* Liste todos os dispositivos cadastrados, mostrando também a última leitura registrada para cada sensor. 
-Caso algum dispositivo ainda não tenha leituras, ele deve aparecer mesmo assim (com valores nulos). 
-1. LDR
-2. DHT22
-3. Ultrassonico
+3. LDR
+4. DHT22
+5. Ultrassonico
 */
 -- 3.
 SELECT esp.nome "Dispositivo",
@@ -46,7 +58,7 @@ INNER JOIN ldr_dados ldrd on esp.id = ldrd.ldr_sensor_id
 INNER JOIN ldr_sensores ldrs on ldrd.id = ldrs.esp32_dispositivo_id
 GROUP BY esp.nome, esp.status, ldrs.id
 ORDER BY esp.nome;
-
+-- -------------------------------------------------------------------------------------------------------
 -- 4.
 SELECT esp.nome "Dispositivo",
 UPPER(esp.status) "Status do Dispositivo",
@@ -59,18 +71,21 @@ INNER JOIN dht22_sensores dhts on esp.id = dhts.esp32_dispositivo_id
 INNER JOIN dht22_dados dhtd on dhts.id - dhtd.dht22_sensor_id
 GROUP BY esp.nome, esp.status, dhts.id
 ORDER BY esp.nome;
-
+-- -------------------------------------------------------------------------------------------------------
 -- 5.
 SELECT esp.nome "Dispositivo",
 esp.status "Status do Dispositivo",
 MAX(ults.id) "Ultrassonico",
 CONCAT( MAX(ultd.distancia), ' M') "Distancia",
-MAX(ultd.impacto) "Impacto",
 MAX(ultd.timestamp) "Momento do Registro Ultrassonico"
 FROM esp32_dispositivos esp 
 INNER JOIN ultrassonico_sensores ults on esp.id = ults.esp32_dispositivo_id
 INNER JOIN ultrassonico_dados ultd on ults.id = ultd.ultrassonico_sensor_id
 GROUP BY esp.nome, esp.status, ults.id
 ORDER BY esp.nome;
+-- -------------------------------------------------------------------------------------------------------
+-- Qual foi a temperatura e umidade registradas pelos sensores DHT22 nos últimos 7 dias? 
+
+
 
 
