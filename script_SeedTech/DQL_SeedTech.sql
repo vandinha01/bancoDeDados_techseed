@@ -36,9 +36,5 @@ ldrd.luminosidade "Luminosidade",
 ldrd.timestamp "Momento"
 ;
 
-delimiter $$
-create funcion 
-delimiter ;
-
 
 
